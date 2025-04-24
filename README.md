@@ -1,0 +1,14 @@
+# My dot files
+This repo is to organize my configuration files so that I can use them across devices and easily reinstall my system with they.
+
+## NeoVim
+Neovim related stuff
+
+## Sway
+Sway Window Manager
+
+## Fish
+Fish shell
+
+## General system scripts
+Some other stuff I use
