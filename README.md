@@ -4,7 +4,7 @@ This repo is to organize my configuration files so that I can use them across de
 I sync these configurations using [GNU stow](https://www.gnu.org/software/stow/)
 
 ## NeoVim
-Neovim related stuff
+I am using the [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) configuration as the base.
 
 ## Sway
 Sway Window Manager
