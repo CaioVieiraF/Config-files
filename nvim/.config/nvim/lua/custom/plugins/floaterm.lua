@@ -41,12 +41,16 @@ local function create_floating_window(opts)
 end
 
 -- Function to toggle the window
-local function float_terminal()
+local function float_terminal(cmd)
   if not vim.api.nvim_win_is_valid(state.floating.win) then
     state.floating = create_floating_window { buf = state.floating.buf }
 
     if vim.bo[state.floating.buf].buftype ~= 'terminal' then
-      vim.cmd.term()
+      if cmd ~= nil then
+        vim.cmd.term(cmd)
+      else
+        vim.cmd.term()
+      end
     end
   else
     vim.api.nvim_win_hide(state.floating.win)
@@ -54,6 +58,6 @@ local function float_terminal()
 end
 
 return {
-  vim.api.nvim_create_user_command('Floaterm', float_terminal, {}),
+  vim.api.nvim_create_user_command('Floaterm', float_terminal(cmd), { cmd }),
   vim.keymap.set({ 'n', 't' }, '<space>tf', float_terminal, { desc = '[T]oggle [F]loating Terminal' }),
 }
