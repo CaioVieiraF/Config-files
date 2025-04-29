@@ -1,0 +1,109 @@
+@import url('file:///home/v/.cache/wal/colors-waybar.css');
+
+* {
+    border: none;
+    border-radius: 20;
+    font-family: "Caskaydia Mono Nerd Font Mono";
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    font-size: 18px;
+}
+
+#window {
+    font-weight: bold;
+    margin-bottom: 10;
+    margin-left: 10;
+    margin-right: 10;
+    padding: 10;
+    color: @foreground;
+    background: @background;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+window#waybar.empty #window {
+    background: transparent;
+    box-shadow: none;
+}
+
+#workspaces {
+    margin-bottom: 5;
+    margin-left: 5;
+    margin-right: 5;
+    padding: 5;
+    background: @background;
+    font-size: 26px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#workspaces button {
+    padding: 5;
+    padding-left: 16;
+    padding-right: 16;
+    margin: 5;
+    background: transparent;
+    color: @foreground;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    transition: all 0.2s linear;
+}
+
+#workspaces button.focused {
+    color: @background;
+    background: @foreground;
+}
+
+#workspaces button:hover {
+    box-shadow: rgba(163, 195, 234, 0.4) 0px 5px 15px;
+    transition: all 0.2s linear;
+}
+
+.modules-center {
+    background: @foreground;
+    padding: 5;
+    margin-bottom: 10;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#clock, #mpd {
+    font-weight: bold;
+    background: @background;
+    color: @foreground;
+    padding: 10;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.modules-right {
+    background: @background;
+    padding: 10;
+    margin-bottom: 10;
+    margin-left: 10;
+    margin-right: 10;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#wireplumber, #keyboard-state, #temperature, #cpu, #memory, #network, #tray, #mode {
+    background: @foreground;
+    color: @background;
+    padding: 10;
+    margin-left: 8;
+    margin-right: 8;
+}
+
+#keyboard-state {
+    background: #97e1ad;
+    color: @background;
+}
+
+#keyboard-state > label {
+    padding: 0 5px;
+}
+
+#keyboard-state > label.locked {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#network.disconnected {
+    background: @color2;
+}

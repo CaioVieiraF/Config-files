@@ -1,0 +1,122 @@
+@import url('file:///home/v/.cache/wal/colors-waybar.css');
+
+* {
+    border-radius: 0;
+    border: none;
+    font-family: "Shure Tech Mono Nerd Font";
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    font-size: 20px;
+}
+
+#window {
+    font-weight: bold;
+    padding: 10;
+    margin-left: 4;
+    border-right: 10px solid @color5;
+    border-top: 1px solid @color5;
+    color: @foreground;
+    background: @background;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+window#waybar.empty #window {
+    background: transparent;
+    box-shadow: none;
+}
+
+#workspaces {
+    padding: 0;
+    background: @background;
+    font-size: 26px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#workspaces button {
+    padding: 0;
+    padding-left: 18px;
+    padding-right: 18px;
+    margin: 0;
+    background: transparent;
+    color: @color1;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+
+#workspaces button.focused {
+    border: 1px solid @foreground;
+    color: @foreground;
+}
+
+#workspaces button:hover {
+    color: @background;
+    background: @foreground;
+}
+
+.modules-left {
+    background: @foreground;
+    padding: 0;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.modules-center {
+    background: @color5;
+    border-left: 10px solid @foreground;
+    border-bottom: 2px solid @foreground;
+    margin-bottom: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#clock, #mpd, #cava{
+    font-weight: bold;
+    background: @background;
+    color: @color5;
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+#cava{
+    color: @foreground;
+    padding: 0;
+    margin: 0;
+}
+
+#mpd {
+    padding: 5;
+    margin: 1;
+    margin-bottom: 0;
+}
+
+.modules-right {
+    background: @background;
+    border: 1px solid @color4;
+    padding-left: 0;
+    margin-bottom: 10;
+    margin-left: 10;
+    margin-right: 10;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+#wireplumber, #temperature, #cpu, #memory, #network, #tray, #mode {
+    background: @color5;
+    color: @background;
+    padding: 10;
+    margin-left: 2;
+    margin-right: 2;
+}
+
+#temperature {
+    background: @foreground;
+}
+
+#network {
+    background: @foreground;
+}
+
+#network.disconnected {
+    background: @color2;
+}
