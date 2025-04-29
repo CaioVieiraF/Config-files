@@ -1,0 +1,34 @@
+
+[font]
+size = 26.0
+
+[font.bold]
+#family = "Caskaydia Mono Nerd Font Mono"
+#family = "Shure Tech Mono Nerd Font"
+family = "JetBrains Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "JetBrains Mono"
+style = "Bold Italic"
+
+[font.italic]
+
+family = "JetBrains Mono"
+style = "Italic"
+
+[font.normal]
+family = "JetBrains Mono"
+style = "Regular"
+
+[window]
+dynamic_title = true
+opacity = 1.0
+
+[window.padding]
+x = 2
+y = 2
+
+[window.dimensions]
+columns = 125
+lines = 30
