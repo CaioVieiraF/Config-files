@@ -19,6 +19,7 @@ set $right l
 # Your preferred terminal emulator
 set $term alacritty
 set $main_term ghostty
+set $browser firefox
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
@@ -100,6 +101,12 @@ input type:keyboard {
 #
     # Start a terminal
     bindsym $mod+z exec $main_term
+
+    # Open a browser window
+    bindsym $mod+Shift+b exec $browser
+
+    # Open neovim
+    bindsym $mod+n exec $term --config-file ~/.config/alacritty/neovim.toml -e nvim
 
     # Kill focused window
     bindsym $mod+Shift+q kill
@@ -257,3 +264,6 @@ gaps inner 20
 gaps outer 40
 default_border pixel 2
 client.focused #4B5055 #4B5055 #4B5055 #4B5055
+
+## Start notification manager
+exec /usr/bin/dunst 

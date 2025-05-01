@@ -22,10 +22,10 @@
     ### Geometry ###
 
     # The width of the window, excluding the frame.
-    width = 700
+    width = 900
 
     # The height of a single notification, excluding the frame.
-    height = 700
+    height = 300
     # NOTE: Dunst from version 1.11 and older don't support dynamic height
     #       and the given value is treated as the maximum height
 
@@ -35,13 +35,13 @@
     # Offset from the origin
     # NOTE: Dunst from version 1.11 and older use this alternative notation
     # offset = 10x50
-    offset = (10, 50)
+    offset = (50, 40)
 
     # Scale factor. It is auto-detected if value is 0.
-    scale = 10
+    scale = 1
 
     # Maximum number of notification (0 means no limit)
-    notification_limit = 20
+    notification_limit = 8
 
     ### Progress bar ###
 
@@ -70,7 +70,7 @@
     progress_bar_corners = all
 
     # Corner radius for the icon image.
-    icon_corner_radius = 0
+    icon_corner_radius = 4
 
     # Define which corners to round when drawing the icon image. If icon_corner_radius
     # is set to 0 this option will be ignored.
@@ -92,20 +92,20 @@
     separator_height = 2
 
     # Padding between text and separator.
-    padding = 8
+    padding = 32
 
     # Horizontal padding.
-    horizontal_padding = 8
+    horizontal_padding = 32
 
     # Padding between text and icon.
-    text_icon_padding = 0
+    text_icon_padding = 22
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
     frame_width = 3
 
     # Defines color of the frame around the notification window.
-    frame_color = "#aaaaaa"
+    frame_color = "#A29F9F"
 
     # Size of gap to display between notifications - requires a compositor.
     # If value is greater than 0, separator_height will be ignored and a border
@@ -138,7 +138,7 @@
 
     ### Text ###
 
-    font = Monospace 8
+    font = "Jetbrains Mono 22"
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.
@@ -216,7 +216,7 @@
     enable_recursive_icon_lookup = true
 
     # Set icon theme (only used for recursive icon lookup)
-    icon_theme = Adwaita
+    icon_theme = breeze
     # You can also set multiple icon themes, with the leftmost one being used first.
     # icon_theme = "Adwaita, breeze"
 
@@ -265,7 +265,7 @@
     # corners.
     # The radius will be automatically lowered if it exceeds half of the
     # notification height to avoid clipping text and/or icons.
-    corner_radius = 0
+    corner_radius = 2
 
     # Define which corners to round when drawing the window. If the corner radius
     # is set to 0 this option will be ignored.
@@ -342,8 +342,8 @@
     default_icon = dialog-information
 
 [urgency_normal]
-    background = "#285577"
-    foreground = "#ffffff"
+    background = "#0a1015"
+    foreground = "#e3d9d3"
     timeout = 10
     override_pause_level = 30
     # Icon for notifications with normal urgency
