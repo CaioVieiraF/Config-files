@@ -260,8 +260,8 @@ bar swaybar_command waybar
 include /etc/sway/config.d/*
 
 ## Other stuff
-gaps inner 20
-gaps outer 40
+gaps inner 10
+gaps outer 20
 default_border pixel 2
 client.focused #4B5055 #4B5055 #4B5055 #4B5055
 
