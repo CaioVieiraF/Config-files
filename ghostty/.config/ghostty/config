@@ -1,5 +1,5 @@
 font-size = 26
 window-decoration = false
-background-opacity = 1.0
-background-blur-radius = 20
+background-opacity = 0.8
+background-blur-radius = true
 theme = CutiePro
