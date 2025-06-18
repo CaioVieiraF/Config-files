@@ -10,3 +10,4 @@ if type -q tmux
     end
 end
 
+zoxide init fish | source

@@ -25,3 +25,6 @@ vim.keymap.set('n', '<space>cr', function()
   -- Send the command 'cargo run'
   vim.fn.chansend(job_id, { 'cargo run\r\n' })
 end, { desc = '[C]argo [R]un' })
+
+-- Telescope
+vim.keymap.set('n', '<space>df', require('telescope.builtin').find_files, { desc = 'Find project files' })

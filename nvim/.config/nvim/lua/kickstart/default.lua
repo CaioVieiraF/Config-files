@@ -677,6 +677,11 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
+        ruff = {
+          init_options = {
+            settings = {},
+          },
+        },
 
         zls = {
           -- https://zigtools.org/zls/guides/build-on-save/
