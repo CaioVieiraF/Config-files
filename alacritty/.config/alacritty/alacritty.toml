@@ -1,5 +1,5 @@
 [font]
-size = 26.0
+size = 30.0
 
 [font.bold]
 #family = "Caskaydia Mono Nerd Font Mono"
@@ -25,8 +25,8 @@ dynamic_title = true
 opacity = 1.0
 
 [window.padding]
-x = 8
-y = 8
+x = 0
+y = 0
 
 [window.dimensions]
 columns = 125

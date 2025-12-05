@@ -60,6 +60,7 @@ set $plaunch exec $term --class launcher --config-file .config/alacritty/project
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 output "*" bg $wallpaper fill
 client.focused $color0 $background $foreground $color7 $background
+
 #
 # Example configuration:
 #
