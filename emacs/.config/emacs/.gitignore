@@ -1,0 +1,6 @@
+*
+!init.el
+!config.org
+!.gitignore
+!early-init.el
+!themes/
