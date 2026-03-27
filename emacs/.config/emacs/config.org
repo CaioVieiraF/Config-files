@@ -10,12 +10,17 @@
   - [[#carregando-evil-mode][Carregando evil mode]]
   - [[#atalhos-de-teclado][Atalhos de teclado]]
 - [[#fontes][Fontes]]
+- [[#rainbow-mode][Rainbow mode]]
 - [[#alterações-da-interface-gráfica][Alterações da interface gráfica]]
   - [[#desabilita-menubar-toolbar-and-scrollbar][Desabilita Menubar, Toolbar and Scrollbar]]
   - [[#mostra-número-das-linhas-e-linhas-truncated][Mostra número das linhas e linhas Truncated]]
+  - [[#tema][Tema]]
+  - [[#fundo-transparente][Fundo transparente]]
 - [[#org-mode][ORG mode]]
   - [[#habilitando-o-índice][Habilitando o índice]]
   - [[#trocando-o-asterisco-dos-cabeçalhos][Trocando o asterisco dos cabeçalhos]]
+  - [[#desabilita-identação-elétrica][Desabilita identação 'elétrica']]
+  - [[#ativa-atalho-para-bloco-de-código][Ativa atalho para bloco de código]]
 - [[#which-key][Which Key]]
 
 * Inicialização
@@ -61,71 +66,97 @@
     (add-hook 'after-init-hook #'elpaca-process-queues)
     (elpaca `(,@elpaca-order))
 
+        ;; Install use-package support
+        (elpaca elpaca-use-package
+          ;; Enable use-package :ensure support for Elpaca.
+          (elpaca-use-package-mode)
+  	  (setq elpaca-use-package-by-default t))
+  (elpaca-wait)
 #+end_src
   
 ** Carregando evil mode
 
 #+begin_src emacs-lisp
-            ;; Install use-package support
-            (elpaca elpaca-use-package
-              ;; Enable use-package :ensure support for Elpaca.
-              (elpaca-use-package-mode))
 
-            ;;When installing a package used in the init file itself,
-            ;;e.g. a package which adds a use-package key word,
-            ;;use the :wait recipe keyword to block until that package is installed/configured.
-            ;;For example:
-            ;;(use-package general :ensure (:wait t) :demand t)
+        ;;When installing a package used in the init file itself,
+        ;;e.g. a package which adds a use-package key word,
+        ;;use the :wait recipe keyword to block until that package is installed/configured.
+        ;;For example:
+        ;;(use-package general :ensure (:wait t) :demand t)
 
-            ;; Expands to: (elpaca evil (use-package evil :demand t))
-            (use-package evil
-              :ensure t
-              :init
-              (setq evil-want-keybinding nil)
-              (evil-mode))
-            (elpaca evil-collection
-              (use-package evil-collection
-        	:after evil
-      	:config
-    	(setq evil-collection-mode-list '(dashboard dired ibuffer))
-  	(evil-collection-init)))
+        ;; Expands to: (elpaca evil (use-package evil :demand t))
+        (use-package evil
+          :ensure t
+          :init
+          (setq evil-want-keybinding nil)
+          (evil-mode))
+        (elpaca evil-collection
+          (use-package evil-collection
+    	:after evil
+  	:config
+  (setq evil-collection-mode-list '(dashboard dired ibuffer))
+  (evil-collection-init)))
 
-            ;;Turns off elpaca-use-package-mode current declaration
-            ;;Note this will cause evaluate the declaration immediately. It is not deferred.
-            ;;Useful for configuring built-in emacs features.
-            (use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
+        ;;Turns off elpaca-use-package-mode current declaration
+        ;;Note this will cause evaluate the declaration immediately. It is not deferred.
+        ;;Useful for configuring built-in emacs features.
+        ;;(use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
 
 #+end_src
-
-
 
 
 ** Atalhos de teclado
 
 #+begin_src emacs-lisp
-(elpaca general
-    (use-package general
-	:config
-	(general-evil-setup)
+          (use-package general
+            :ensure t
+          :config
+          (general-evil-setup)
 
-	;; Set up 'SPC' as the global leader key
-	(general-create-definer moang/leader-keys
-	:states '(normal insert visuals emacs)
-	:keymaps 'override
-	:prefix "SPC"
-	:global-prefix "M-SPC")
+          ;; Set up 'SPC' as the global leader key
+          (general-create-definer moang/leader-keys
+          :states '(normal insert visuals emacs)
+          :keymaps 'override
+          :prefix "SPC"
+          :global-prefix "M-SPC")
 
-	(moang/leader-keys
-	"b" '(:ignore t :wk "buffer")
-	"bb" '(switch-to-buffer :wk "Switch buffer")
-	"bk" '(kill-this-buffer :wk "Kill this buffer")
-	"bn" '(next-buffer :wk "Next buffer")
-	"bp" '(previous-buffer :wk "Previous buffer")
-	"br" '(revert-buffer :wk "Reload buffer"))
+          (moang/leader-keys
+              "." '(find-file :wk "Find file")
+      "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
+      "TAB TAB" '(comment-line :wk "Comment lines")
+      )
 
+
+          (moang/leader-keys
+          "b" '(:ignore t :wk "buffer")
+          "b b" '(switch-to-buffer :wk "Switch buffer")
+          "b i" '(ibuffer :wk "Ibuffer")
+          "b k" '(kill-this-buffer :wk "Kill this buffer")
+          "b n" '(next-buffer :wk "Next buffer")
+          "b p" '(previous-buffer :wk "Previous buffer")
+          "b r" '(revert-buffer :wk "Reload buffer"))
+
+          (moang/leader-keys
+          "e" '(:ignore t :wk "Evaluate")
+          "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+          "e d" '(eval-defun :wk "Evaluate defun containing or after point")
+          "e e" '(eval-expression :wk "Evaluate and elisp expression")
+              "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
+              "e r" '(eval-region :wk "Evaluate elisp in region")
+          )
+
+          (moang/leader-keys
+    	"h" '(:ignore t :wk "Help")
+  	"h f" '(describe-function :wk "Describe function")
+  "h v" '(describe-variable :wk "Describe variable")
+  "h r r" '((lambda () (interactive) (load-file user-init-file)) :wk "Reload emacs config")
+  )
+
+  	(moang/leader-keys
+    "t" '(:ignore t wk "Toggle")
+    "t w" '(visual-line-mode :wk "Toggle line wrap")
     )
-)
-
+          )
 #+end_src
 
 
@@ -161,6 +192,14 @@ Defining the fonts for emacs
 
 #+end_src
 
+* Rainbow mode
+Esse é um pacote que coloca a cor de um código de cor como
+seu fundo para que seja possível visualizar o que está escrito.
+
+#+begin_src emacs-lisp
+  (use-package rainbow-mode :ensure t :hook org-mode prog-mode)
+#+end_src
+
 * Alterações da interface gráfica
 Some changes to the graphical aspects of Emacs.
 
@@ -177,23 +216,46 @@ Some changes to the graphical aspects of Emacs.
   (global-visual-line-mode t)
 #+end_src
 
+** Tema
+
+#+begin_src emacs-lisp
+  (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+  (load-theme 'reykjavik t)
+#+end_src
+
+** Fundo transparente
+
+#+begin_src emacs-lisp
+  (set-frame-parameter nil 'alpha-background 70)
+#+end_src
+
 * ORG mode
 O ORG mode é uma série de funcionalidades para criar anotações, documentações e afins.
 
 ** Habilitando o índice
 #+begin_src emacs-lisp
-  (elpaca toc-org
   (use-package toc-org
+    :ensure t
     :commands toc-org-enable
     :init (add-hook 'org-mode-hook 'toc-org-enable))
-  )
 #+end_src
 
 ** Trocando o asterisco dos cabeçalhos
 #+begin_src emacs-lisp
   (add-hook 'org-mode-hook 'org-indent-mode)
-  (elpaca org-bullets (use-package org-bullets))
+  (use-package org-bullets :ensure t)
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+end_src
+
+** Desabilita identação 'elétrica'
+Por padrão o ORG mode tenta identar código de maneira errada, então aqui eu desabilito isso.
+#+begin_src emacs-lisp
+  (electric-indent-mode -1)
+#+end_src
+
+** Ativa atalho para bloco de código
+#+begin_src emacs-lisp
+(require 'org-tempo)
 #+end_src
 
 * Which Key
@@ -201,23 +263,21 @@ O Which key é uma ferramenta que indica quais atalhos posso usar durante
 a digitação deles. Quando eu aperto a leader key ele aparece no minibuffer.
 
 #+begin_src emacs-lisp
-(elpaca which-key
-    (use-package which-key
-	:init
-	(which-key-mode 1)
-	:config
-	(setq which-key-side-window-location 'bottom
-	    which-key-sort-order #'which-key-order-alpha
-	    which-key-sort-uppercase-first nil
-	    which-key-add-column-padding 1
-	    which-key-max-display-columns nil
-	    which-key-min-display-lines 6
-	    which-key-side-window-slot -10
-	    which-key-side-window-max-height 0.25
-	    which-key-idle-delay 0.8
-	    which-key-max-description-lenght 25
-	    which-key-allow-imprecise-window-fit t
-	    which-key-separator "  "))
-)
-  
+  (use-package which-key
+      :init
+      (which-key-mode 1)
+      :config
+      (setq which-key-side-window-location 'bottom
+          which-key-sort-order #'which-key-key-order-alpha
+          which-key-sort-uppercase-first nil
+          which-key-add-column-padding 1
+          which-key-max-display-columns nil
+          which-key-min-display-lines 6
+          which-key-side-window-slot -10
+          which-key-side-window-max-height 0.25
+          which-key-idle-delay 0.8
+          which-key-max-description-lenght 25
+          which-key-allow-imprecise-window-fit t
+          which-key-separator "  "))
+    
 #+end_src
