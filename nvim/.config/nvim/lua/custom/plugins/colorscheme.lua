@@ -1,7 +1,8 @@
 return {
-  'rose-pine/neovim',
-  name = 'rose-pine',
+   'dylanaraps/wal.vim',
+--  'rose-pine/neovim',
+  name = 'pywal',
   config = function()
-    vim.cmd 'colorscheme rose-pine'
+    vim.cmd 'colorscheme wal'
   end,
 }
