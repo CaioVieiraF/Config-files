@@ -2,7 +2,7 @@ if status is-interactive
     # Commands to run in interactive sessions can go here
 end
 
-cat /home/v/.cache/wal/sequences
+sed 's/\x1b\]11;#[^ ]*//g; s/\x1b\]708;#[^ ]*//g' ~/.cache/wal/sequences > /dev/tty
 
 if type -q tmux
     if not test -n "$TMUX"

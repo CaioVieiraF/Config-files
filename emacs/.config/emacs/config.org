@@ -6,198 +6,237 @@
 
 * Índice :toc:
 - [[#inicialização][Inicialização]]
-  - [[#gerenciador-de-pacotes][Gerenciador de pacotes]]
+  - [[#carregando-scripts-externos][Carregando scripts externos]]
   - [[#carregando-evil-mode][Carregando evil mode]]
   - [[#atalhos-de-teclado][Atalhos de teclado]]
+  - [[#diminish][Diminish]]
+- [[#ícones][Ícones]]
 - [[#fontes][Fontes]]
-- [[#rainbow-mode][Rainbow mode]]
+- [[#cores-em-código][Cores em código]]
+  - [[#rainbow-mode][Rainbow mode]]
+  - [[#rainbow-delimiter][Rainbow delimiter]]
+- [[#backup][Backup]]
+- [[#dashboard][Dashboard]]
+  - [[#projectile][Projectile]]
 - [[#alterações-da-interface-gráfica][Alterações da interface gráfica]]
   - [[#desabilita-menubar-toolbar-and-scrollbar][Desabilita Menubar, Toolbar and Scrollbar]]
-  - [[#mostra-número-das-linhas-e-linhas-truncated][Mostra número das linhas e linhas Truncated]]
   - [[#tema][Tema]]
   - [[#fundo-transparente][Fundo transparente]]
+- [[#ivy][IVY]]
+- [[#modeline][Modeline]]
+- [[#neotree][Neotree]]
+- [[#digitação][Digitação]]
+- [[#desenvolvimento][Desenvolvimento]]
+  - [[#lsp][LSP]]
+  - [[#flycheck][Flycheck]]
+  - [[#company][Company]]
+  - [[#python][Python]]
+  - [[#rust][Rust]]
+  - [[#lua][Lua]]
+  - [[#haskell][Haskell]]
+- [[#produtividade][Produtividade]]
+  - [[#destacar-todo][Destacar TODO]]
 - [[#org-mode][ORG mode]]
   - [[#habilitando-o-índice][Habilitando o índice]]
   - [[#trocando-o-asterisco-dos-cabeçalhos][Trocando o asterisco dos cabeçalhos]]
-  - [[#desabilita-identação-elétrica][Desabilita identação 'elétrica']]
-  - [[#ativa-atalho-para-bloco-de-código][Ativa atalho para bloco de código]]
 - [[#which-key][Which Key]]
 
 * Inicialização
-** Gerenciador de pacotes
+** Carregando scripts externos
 
 #+begin_src emacs-lisp
-    (defvar elpaca-installer-version 0.12)
-    (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-    (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-    (defvar elpaca-sources-directory (expand-file-name "sources/" elpaca-directory))
-    (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                                  :ref nil :depth 1 :inherit ignore
-                                  :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                                  :build (:not elpaca-activate)))
-    (let* ((repo  (expand-file-name "elpaca/" elpaca-sources-directory))
-           (build (expand-file-name "elpaca/" elpaca-builds-directory))
-           (order (cdr elpaca-order))
-           (default-directory repo))
-      (add-to-list 'load-path (if (file-exists-p build) build repo))
-      (unless (file-exists-p repo)
-        (make-directory repo t)
-        (when (<= emacs-major-version 28) (require 'subr-x))
-        (condition-case-unless-debug err
-            (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                      ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-                                                      ,@(when-let* ((depth (plist-get order :depth)))
-                                                          (list (format "--depth=%d" depth) "--no-single-branch"))
-                                                      ,(plist-get order :repo) ,repo))))
-                      ((zerop (call-process "git" nil buffer t "checkout"
-                                            (or (plist-get order :ref) "--"))))
-                      (emacs (concat invocation-directory invocation-name))
-                      ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                            "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                      ((require 'elpaca))
-                      ((elpaca-generate-autoloads "elpaca" repo)))
-                (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-              (error "%s" (with-current-buffer buffer (buffer-string))))
-          ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-      (unless (require 'elpaca-autoloads nil t)
-        (require 'elpaca)
-        (elpaca-generate-autoloads "elpaca" repo)
-        (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
-    (add-hook 'after-init-hook #'elpaca-process-queues)
-    (elpaca `(,@elpaca-order))
-
-        ;; Install use-package support
-        (elpaca elpaca-use-package
-          ;; Enable use-package :ensure support for Elpaca.
-          (elpaca-use-package-mode)
-  	  (setq elpaca-use-package-by-default t))
-  (elpaca-wait)
+(add-to-list 'load-path "~/.config/emacs/scripts")
+(require 'elpaca-setup)
 #+end_src
   
 ** Carregando evil mode
 
 #+begin_src emacs-lisp
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-keybinding nil)
+  (evil-mode))
 
-        ;;When installing a package used in the init file itself,
-        ;;e.g. a package which adds a use-package key word,
-        ;;use the :wait recipe keyword to block until that package is installed/configured.
-        ;;For example:
-        ;;(use-package general :ensure (:wait t) :demand t)
+(elpaca evil-collection
+  (use-package evil-collection
+    :after evil
+    :config
+    (setq evil-collection-mode-list '(dashboard dired ibuffer))
+    (evil-collection-init)))
 
-        ;; Expands to: (elpaca evil (use-package evil :demand t))
-        (use-package evil
-          :ensure t
-          :init
-          (setq evil-want-keybinding nil)
-          (evil-mode))
-        (elpaca evil-collection
-          (use-package evil-collection
-    	:after evil
-  	:config
-  (setq evil-collection-mode-list '(dashboard dired ibuffer))
-  (evil-collection-init)))
-
-        ;;Turns off elpaca-use-package-mode current declaration
-        ;;Note this will cause evaluate the declaration immediately. It is not deferred.
-        ;;Useful for configuring built-in emacs features.
-        ;;(use-package emacs :ensure nil :config (setq ring-bell-function #'ignore))
-
+;; Muda o comportamento de algumas teclas no modo Evil para
+;; funcionar do jeito padrão no emacs.
+(with-eval-after-load 'evil-maps
+  (define-key evil-motion-state-map (kbd "SPC") nil)
+  (define-key evil-motion-state-map (kbd "RET") nil)
+  (define-key evil-motion-state-map (kbd "TAB") nil))
 #+end_src
-
 
 ** Atalhos de teclado
 
 #+begin_src emacs-lisp
-          (use-package general
-            :ensure t
-          :config
-          (general-evil-setup)
+;; Altera o padrão da quantidade de vezes que é preciso apertar
+;; a tecla ESC de 3 para 1 para fechar o minibuffer.
+(global-set-key [escape] 'keyboard-escape-quit)
 
-          ;; Set up 'SPC' as the global leader key
-          (general-create-definer moang/leader-keys
-          :states '(normal insert visuals emacs)
-          :keymaps 'override
-          :prefix "SPC"
-          :global-prefix "M-SPC")
+;; Atalhos
+(use-package general
+  :ensure t
+  :config
+  (general-evil-setup)
 
-          (moang/leader-keys
-              "." '(find-file :wk "Find file")
-      "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
-      "TAB TAB" '(comment-line :wk "Comment lines")
-      )
+  ;; Configura a tecla 'SPC' como a leader-key
+  (general-create-definer moang/leader-keys
+    :states '(normal insert visuals emacs)
+    :keymaps 'override
+    :prefix "SPC"
+    :global-prefix "M-SPC")
 
+  ;; Atalhos de arquivos
+  (moang/leader-keys
+    "SPC" '(counsel-M-x :wk "Counsel M-x")
+    "." '(find-file :wk "Find file")
+    "f" '(:ignore t :wk "File")
+    "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
+    "f r" '(counsel-recentf :wk "Find recent files")
+    "TAB TAB" '(comment-line :wk "Comment lines"))
 
-          (moang/leader-keys
-          "b" '(:ignore t :wk "buffer")
-          "b b" '(switch-to-buffer :wk "Switch buffer")
-          "b i" '(ibuffer :wk "Ibuffer")
-          "b k" '(kill-this-buffer :wk "Kill this buffer")
-          "b n" '(next-buffer :wk "Next buffer")
-          "b p" '(previous-buffer :wk "Previous buffer")
-          "b r" '(revert-buffer :wk "Reload buffer"))
+  ;; Interações com os buffers
+  (moang/leader-keys
+    "b" '(:ignore t :wk "buffer")
+    "b b" '(switch-to-buffer :wk "Switch buffer")
+    "b i" '(ibuffer :wk "Ibuffer")
+    "b k" '(kill-current-buffer :wk "Kill this buffer")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
+    "b r" '(revert-buffer :wk "Reload buffer"))
 
-          (moang/leader-keys
-          "e" '(:ignore t :wk "Evaluate")
-          "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
-          "e d" '(eval-defun :wk "Evaluate defun containing or after point")
-          "e e" '(eval-expression :wk "Evaluate and elisp expression")
-              "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
-              "e r" '(eval-region :wk "Evaluate elisp in region")
-          )
+  ;; Interpretar código lisp inline
+  (moang/leader-keys
+    "e" '(:ignore t :wk "Evaluate")
+    "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+    "e d" '(eval-defun :wk "Evaluate defun containing or after point")
+    "e e" '(eval-expression :wk "Evaluate and elisp expression")
+    "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
+    "e r" '(eval-region :wk "Evaluate elisp in region"))
 
-          (moang/leader-keys
-    	"h" '(:ignore t :wk "Help")
-  	"h f" '(describe-function :wk "Describe function")
-  "h v" '(describe-variable :wk "Describe variable")
-  "h r r" '((lambda () (interactive) (load-file user-init-file)) :wk "Reload emacs config")
-  )
+  ;; Ajuda e algumas coisas a mais
+  (moang/leader-keys
+    "h" '(:ignore t :wk "Help")
+    "h f" '(describe-function :wk "Describe function")
+    "h v" '(describe-variable :wk "Describe variable")
+    "h r r" '((lambda () (interactive) (load-file user-init-file)) :wk "Reload emacs config"))
 
-  	(moang/leader-keys
+  ;; Troca(toggle) algum estado
+  (moang/leader-keys
     "t" '(:ignore t wk "Toggle")
-    "t w" '(visual-line-mode :wk "Toggle line wrap")
-    )
-          )
+    "t n" '(neotree-toggle :wk "Toggle neotree")
+    "t w" '(visual-line-mode :wk "Toggle line wrap")))
 #+end_src
 
+** Diminish
 
+#+begin_src emacs-lisp
+(use-package diminish :ensure t)
+#+end_src
+
+* Ícones
+#+begin_src emacs-lisp
+(use-package nerd-icons :ensure t)
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+(use-package all-the-icons-dired
+  :ensure t
+  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+#+end_src
 * Fontes
 Defining the fonts for emacs
 
 #+begin_src emacs-lisp
-  (set-face-attribute 'default nil
-  	      :font "Jetbrains Mono"
-  	      :height 240
-  	      :weight 'medium)
-  (set-face-attribute 'variable-pitch nil
-  	      :font "Ubuntu"
-  	      :height 260
-  	      :weight 'medium)
-  (set-face-attribute 'fixed-pitch nil
-  	      :font "Jetbrains Mono"
-  	      :height 240
-  	      :weight 'medium)
+(set-face-attribute 'default nil
+	      :font "Jetbrains Mono"
+	      :height 260
+	      :weight 'medium)
+(set-face-attribute 'variable-pitch nil
+	      :font "Ubuntu"
+	      :height 280
+	      :weight 'medium)
+(set-face-attribute 'fixed-pitch nil
+	      :font "Jetbrains Mono"
+	      :height 260
+	      :weight 'medium)
 
-  ;; Makes commented text and keywords italic.
-  ;; The font must have an italic face
-  (set-face-attribute 'font-lock-comment-face nil
-  		      :slant 'italic)
-  (set-face-attribute 'font-lock-keyword-face nil
-  		      :slant 'italic)
+;; Makes commented text and keywords italic.
+;; The font must have an italic face
+(set-face-attribute 'font-lock-comment-face nil
+		      :slant 'italic)
+(set-face-attribute 'font-lock-keyword-face nil
+		      :slant 'italic)
 
-  ;; fix for a bug
-  ;; (add-to-list default-frame-alist '(font . "Jetbrains Mono-11"))
+;; fix for a bug
+;; (add-to-list default-frame-alist '(font . "Jetbrains Mono-11"))
 
-  ;; Line spacing
-  ;; (setq-default line-spacing 0.12)
+;; Line spacing
+;; (setq-default line-spacing 0.12)
 
 #+end_src
 
-* Rainbow mode
-Esse é um pacote que coloca a cor de um código de cor como
+* Cores em código
+** Rainbow mode
+Esse é um pacote que coloca a cor de um código de cor(ex. #ffffff) como
 seu fundo para que seja possível visualizar o que está escrito.
 
 #+begin_src emacs-lisp
-  (use-package rainbow-mode :ensure t :hook org-mode prog-mode)
+(use-package rainbow-mode :ensure t :diminish :hook org-mode prog-mode)
+#+end_src
+
+** Rainbow delimiter
+
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :hook ((emacs-lisp-mode . rainbow-delimiters-mode)
+	 (clojure-mode . rainbow-delimiters-mode)))
+#+end_src
+
+* Backup
+
+#+begin_src emacs-lisp
+(setq backup-directory-alist '((".*" . "~/.local/share/Trash/files")))
+#+end_src
+
+* Dashboard
+#+begin_src emacs-lisp
+(use-package dashboard
+    :ensure t
+    :init
+    (setq inital-buffer-choice 'dashboard-open)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-banner-logo-title "Emacs!")
+    (setq dashboard-startup-banner 'logo)
+    (setq dashboard-center-content t)
+    (setq dashboard-items '((recents . 5)
+                            (agenda . 5)
+                            (bookmarks . 5)
+                            (projects . 5)
+                            (registers . 3)))
+    (setq dashboard-modify-heading-icons '((recents . "file-text")
+                                            (bookmarks . "book")))
+    :config
+    (dashboard-setup-startup-hook))
+#+end_src
+
+** Projectile
+
+#+begin_src emacs-lisp
+(use-package projectile
+  :ensure t
+  :diminish
+  :config
+  (projectile-mode 1))
 #+end_src
 
 * Alterações da interface gráfica
@@ -210,17 +249,22 @@ Some changes to the graphical aspects of Emacs.
   (scroll-bar-mode -1)
 #+end_src
 
-** Mostra número das linhas e linhas Truncated
-#+begin_src emacs-lisp
-  (global-display-line-numbers-mode 1)
-  (global-visual-line-mode t)
-#+end_src
-
 ** Tema
 
 #+begin_src emacs-lisp
-  (add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
-  (load-theme 'reykjavik t)
+(add-to-list 'custom-theme-load-path "~/.config/emacs/themes/")
+
+(use-package doom-themes
+  :ensure t
+
+  :custom
+  (doom-themes-enable-bold t)
+  (doom-themes-enable-italic t)
+  
+  :config
+  (load-theme 'doom-badger t)
+  (doom-themes-neotree-config)
+  (doom-themes-org-config))
 #+end_src
 
 ** Fundo transparente
@@ -229,33 +273,231 @@ Some changes to the graphical aspects of Emacs.
   (set-frame-parameter nil 'alpha-background 70)
 #+end_src
 
+* IVY
+#+begin_src emacs-lisp
+(use-package counsel
+  :ensure
+  :diminish
+  :after ivy
+  :config (counsel-mode))
+
+(use-package ivy
+  :ensure
+  :diminish
+  :bind
+  ;; ivy-resume resumes the last Ivy-based completion.
+  (("C-c C-r" . ivy-resume)
+   ("C-x B" . ivy-switch-buffer-other-window))
+  :custom
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq enable-recursive-minibuffers t)
+  :config
+  (ivy-mode))
+
+(use-package all-the-icons-ivy-rich
+  :ensure t
+  :init (all-the-icons-ivy-rich-mode 1))
+
+(use-package ivy-rich
+  :after ivy
+  :ensure t
+  :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
+  :custom
+  (ivy-virtual-abbreviate 'full
+   ivy-rich-switch-buffer-align-virtual-buffer t
+   ivy-rich-path-style 'abbrev)
+  :config
+  (ivy-set-display-transformer 'ivy-switch-buffer
+                               'ivy-rich-switch-buffer-transformer))
+#+end_src
+
+* Modeline
+
+#+begin_src emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :config
+  (setq doom-modeline-height 30
+	doom-modeline-bar-width 5
+	doom-modeline-persp-name t
+	doom-modeline-persp-icon t))
+#+end_src
+
+* Neotree
+
+#+begin_src emacs-lisp
+(use-package neotree
+  :ensure t
+  :config
+  (setq neo-smart-open t
+	neo-show-hidden-files t
+	neo-window-width 40
+	neo-window-fixed-size nil
+	inhibit-compacting-font-caches t
+	projectile-switch-project-action 'neotree-projectile-action)
+)
+#+end_src
+
+* Digitação
+
+#+begin_src emacs-lisp
+;; Deleta uma seleção quando você começa a digitar nela
+(delete-selection-mode 1)
+
+;; Fecha um par(parenteses, aspas, etc.) automaticamente quando você abre ele
+(electric-pair-mode 1)
+(add-hook 'org-mode-hook (lambda ()
+			   (setq-local electric-pair-inhibit-predicate
+				       `(lambda (c)
+					  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+
+;; Por padrão o emacs tenta identar código de maneira errada, então aqui eu desabilito isso.
+(electric-indent-mode -1)
+
+;; Mostra o número da linha
+(global-display-line-numbers-mode 1)
+
+;; Esconde o texto de uma linha grande em vez de quebrar a linha
+(global-visual-line-mode t)
+#+end_src
+
+* Desenvolvimento
+
+** LSP
+
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (
+         (rust-mode . lsp)
+         (python-mode . lsp)
+         (lsp-mode . lsp-enable-which-key-integration))
+  :commands lsp)
+
+;; Ivy integration
+(use-package lsp-ivy :ensure :commands lsp-ivy-workspace-symbol)
+
+;; Which-key integration
+(use-package which-key
+    :config
+    (which-key-mode))
+#+end_src
+
+** Flycheck
+
+#+begin_src emacs-lisp
+(use-package flycheck
+  :ensure t
+  :defer t
+  :diminish
+  :init (global-flycheck-mode))
+#+end_src
+
+** Company
+Completa qualquer código
+
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :defer 2
+  :diminish
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay .1)
+  (company-minimum-prefix-lenght 2)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations 't)
+  (global-company-mode t))
+
+(use-package company-box
+  :ensure t
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode))
+#+end_src
+
+** Python
+
+#+begin_src emacs-lisp
+(use-package python-mode :ensure t)
+(setq-default python-indent-offset 4)
+#+end_src
+
+** Rust
+
+#+begin_src emacs-lisp
+(use-package rust-mode
+  :ensure t
+  ;;:init
+  ;(setq rust-mode-treesitter-derive t)
+
+  :config
+  (setq rust-format-on-save t))
+#+end_src
+
+** Lua
+
+#+begin_src emacs-lisp
+(use-package lua-mode :ensure t)
+#+end_src
+
+** Haskell
+
+#+begin_src emacs-lisp
+(use-package haskell-mode :ensure t)
+#+end_src
+
+* Produtividade
+
+** Destacar TODO
+Esse pacote altera a visualização da palavra 'TODO' e algumas outras palavras em qualquer arquivo.
+#+begin_src emacs-lisp
+(use-package hl-todo
+  :ensure t
+  :hook ((org-mode . hl-todo-mode)
+	 (prog-mode . hl-todo-mode))
+  :config
+  (setq hl-todo-hightlight-punctuation ":"
+	hl-todo-keyword-faces
+	`(("TODO" warning bold)
+	  ("FIXME" error bold)
+	  ("HACK" font-lock-constant-face bold)
+	  ("REVIEW" font-lock-keyword-face bold)
+	  ("NOTE" success bold)
+	  ("DEPRECATED" font-lock-doc-face bold))))
+#+end_src
+
 * ORG mode
 O ORG mode é uma série de funcionalidades para criar anotações, documentações e afins.
 
+#+begin_src emacs-lisp
+;; Ativa atalho para bloco de código
+(require 'org-tempo)
+
+;; Seguir links com a tecla enter
+(setq org-return-follows-link t)
+
+;; Desabilita a identação automática de blocos de código
+(setq org-edit-src-content-indentation 0)
+#+end_src
+
 ** Habilitando o índice
 #+begin_src emacs-lisp
-  (use-package toc-org
-    :ensure t
-    :commands toc-org-enable
-    :init (add-hook 'org-mode-hook 'toc-org-enable))
+(use-package toc-org
+  :ensure t
+  :commands toc-org-enable
+  :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+end_src
 
 ** Trocando o asterisco dos cabeçalhos
 #+begin_src emacs-lisp
-  (add-hook 'org-mode-hook 'org-indent-mode)
-  (use-package org-bullets :ensure t)
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+end_src
-
-** Desabilita identação 'elétrica'
-Por padrão o ORG mode tenta identar código de maneira errada, então aqui eu desabilito isso.
-#+begin_src emacs-lisp
-  (electric-indent-mode -1)
-#+end_src
-
-** Ativa atalho para bloco de código
-#+begin_src emacs-lisp
-(require 'org-tempo)
+(add-hook 'org-mode-hook 'org-indent-mode)
+(use-package org-bullets :ensure t)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+end_src
 
 * Which Key
@@ -263,21 +505,22 @@ O Which key é uma ferramenta que indica quais atalhos posso usar durante
 a digitação deles. Quando eu aperto a leader key ele aparece no minibuffer.
 
 #+begin_src emacs-lisp
-  (use-package which-key
-      :init
-      (which-key-mode 1)
-      :config
-      (setq which-key-side-window-location 'bottom
-          which-key-sort-order #'which-key-key-order-alpha
-          which-key-sort-uppercase-first nil
-          which-key-add-column-padding 1
-          which-key-max-display-columns nil
-          which-key-min-display-lines 6
-          which-key-side-window-slot -10
-          which-key-side-window-max-height 0.25
-          which-key-idle-delay 0.8
-          which-key-max-description-lenght 25
-          which-key-allow-imprecise-window-fit t
-          which-key-separator "  "))
-    
+(use-package which-key
+    :diminish
+    :init
+    (which-key-mode 1)
+    :config
+    (setq which-key-side-window-location 'bottom
+        which-key-sort-order #'which-key-key-order-alpha
+        which-key-sort-uppercase-first nil
+        which-key-add-column-padding 1
+        which-key-max-display-columns nil
+        which-key-min-display-lines 6
+        which-key-side-window-slot -10
+        which-key-side-window-max-height 0.25
+        which-key-idle-delay 0.8
+        which-key-max-description-lenght 25
+        which-key-allow-imprecise-window-fit t
+        which-key-separator "  "))
+  
 #+end_src

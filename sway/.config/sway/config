@@ -39,7 +39,7 @@ corner_radius 10
 # Window background blur
 blur on
 blur_xray off
-blur_passes 2
+blur_passes 4
 blur_radius 5
 
 shadows on
@@ -113,6 +113,9 @@ input type:keyboard {
 
     # Open neovim
     bindsym $mod+n exec $term --config-file ~/.config/alacritty/neovim.toml -e nvim
+    
+    # Open Emacs
+    bindsym $mod+i exec emacs
 
     # Kill focused window
     bindsym $mod+Shift+q kill
