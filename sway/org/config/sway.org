@@ -1,5 +1,38 @@
-include "$HOME/.cache/wal/colors-sway"
+#+TITLE: Configuração SWAY
+#+AUTHOR: Caio V. Fernandes
+#+STARTUP: showeverything
+#+OPTIONS: toc:2
+#+property: header-args :tangle ../../.config/sway/config
 
+* Índice :toc:
+- [[#pywal][Pywal]]
+- [[#variáveis][Variáveis]]
+- [[#aparencia][Aparencia]]
+- [[#saída-de-vídeo][Saída de vídeo]]
+- [[#tela-de-descanço][Tela de descanço]]
+- [[#layout-do-teclado][Layout do teclado]]
+- [[#atalhos-de-teclado][Atalhos de teclado]]
+  - [[#básicos][Básicos]]
+  - [[#audio][Audio]]
+  - [[#brilho-da-tela][Brilho da tela]]
+  - [[#movimentação][Movimentação]]
+  - [[#workspaces][Workspaces]]
+  - [[#scratchpad][Scratchpad]]
+  - [[#screenshots][Screenshots]]
+  - [[#redimencionando-containers][Redimencionando containers]]
+- [[#barra-de-status][Barra de status]]
+- [[#gerenciador-de-notificações][Gerenciador de notificações]]
+- [[#outras-coisas][Outras coisas]]
+
+* Pywal
+
+#+begin_src bash
+include "$HOME/.cache/wal/colors-sway"
+#+end_src
+
+* Variáveis
+
+#+begin_src bash
 # Logo key. Use Mod1 for Alt.
 set $mod Mod4
 
@@ -26,6 +59,14 @@ set $audio_notify_mute dunstify -h string:x-dunst-stack-tag:audio "MUTE" -a 'aud
 set $menu rofi -show drun
 for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
 
+#+end_src
+
+* Aparencia
+
+A maioria dessas configurações só são possíveis por conta do swayFX. O sway
+padrão não borra transparencia, não cria sombras e não altera os cantos das janelas.
+
+#+begin_src bash
 # window corner radius in px
 corner_radius 10
 
@@ -52,6 +93,11 @@ dim_inactive_colors.urgent #900000FF
 # Move minimized windows into Scratchpad (enable|disable)
 #scratchpad_minimize disable
 
+#+end_src
+
+* Saída de vídeo
+
+#+begin_src bash
 # Wallpaper
 output "*" bg $wallpaper fill
 client.focused $color0 $background $foreground $color7 $background
@@ -60,16 +106,30 @@ client.focused $color0 $background $foreground $color7 $background
 output HDMI-A-2 {
         mode 3840x2160@60.000Hz
 }
+#+end_src
 
+* Tela de descanço
+
+#+begin_src bash
 exec swayidle -w \
         timeout 300 'swaylock -f -c 000000' \
         timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
         before-sleep 'swaylock -f -c 000000'
+#+end_src
 
+* Layout do teclado
+
+#+begin_src bash
 input type:keyboard {
         xkb_layout br
 }
+#+end_src
 
+* Atalhos de teclado
+
+** Básicos
+
+#+begin_src bash
 # Start a terminal
 bindsym $mod+z exec $main_term
 
@@ -106,7 +166,11 @@ bindsym $mod+y swaylock -c 000000 -f
 
 # Exit sway (logs you out of your Wayland session)
 bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+#+end_src
 
+** Audio
+
+#+begin_src bash
 # Mute the output
 bindsym --locked XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && $audio_notify_mute
 
@@ -115,13 +179,23 @@ bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@
 
 # Volume Up
 bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 1.0 && $audio_notify
+#+end_src
 
+** Brilho da tela
+
+#+begin_src bash
 # Brightness down
 bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
 
 # Brightness up
 bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
 
+
+#+end_src
+
+** Movimentação
+
+#+begin_src bash
 # Move your focus around
 bindsym $mod+$left focus left
 bindsym $mod+$down focus down
@@ -145,7 +219,11 @@ bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
+#+end_src
 
+** Workspaces
+
+#+begin_src bash
 # Switch to workspace
 bindsym $mod+1 workspace number 1
 bindsym $mod+2 workspace number 2
@@ -197,13 +275,25 @@ bindsym $mod+space focus mode_toggle
 # Move focus to the parent container
 bindsym $mod+a focus parent
 
+
+#+end_src
+
+** Scratchpad
+O Sway tem um "scratchpad", que é como um estoque de janelas. Você pode guardar
+janelas lá e recuperá-las depois
+
+#+begin_src bash
 # Move the currently focused window to the scratchpad
 bindsym $mod+Shift+minus move scratchpad
 
 # Show the next scratchpad window or hide the focused scratchpad window.
 # If there are multiple scratchpad windows, this command cycles through them.
 bindsym $mod+minus scratchpad show
+#+end_src
 
+** Screenshots
+
+#+begin_src bash
 # Print the current focused window
 bindsym $mod+u       exec shotman --capture window
 
@@ -213,6 +303,12 @@ bindsym $mod+Shift+u exec shotman --capture region
 # Print the entire screen
 bindsym $mod+Ctrl+u  exec shotman --capture output
 
+
+#+end_src
+
+** Redimencionando containers
+
+#+begin_src bash
 mode "resize" {
     # left will shrink the containers width
     # right will grow the containers width
@@ -234,14 +330,26 @@ mode "resize" {
     bindsym Escape mode "default"
 }
 bindsym $mod+r mode "resize"
+#+end_src
 
+* Barra de status
+
+#+begin_src bash
 bar swaybar_command waybar
 
 include /etc/sway/config.d/*
+#+end_src
 
-exec /usr/bin/dunst
+* Gerenciador de notificações
 
+#+begin_src bash
+exec /usr/bin/dunst 
+#+end_src
+
+* Outras coisas
+#+begin_src bash
 gaps inner 10
 gaps outer 20
 default_border pixel 2
 client.focused #4B5055 #4B5055 #4B5055 #4B5055
+#+end_src
