@@ -1,3 +1,16 @@
+#+TITLE: Configuração do Alacritty
+#+AUTHOR: Caio V. Fernandes
+#+STARTUP: showeverything
+#+OPTIONS: toc:2
+#+property: header-args :tangle ../../.config/alacritty/alacritty.toml
+
+* Índice :toc:
+- [[#fonts][Fonts]]
+- [[#window][Window]]
+
+* Fonts
+
+#+begin_src toml
 [font]
 size = 30.0
 
@@ -17,7 +30,10 @@ style = "Italic"
 [font.normal]
 family = "JetBrains Mono"
 style = "Regular"
+#+end_src
 
+* Window
+#+begin_src toml
 [window]
 dynamic_title = true
 opacity = 0.7
@@ -29,3 +45,4 @@ y = 0
 [window.dimensions]
 columns = 125
 lines = 30
+#+end_src
