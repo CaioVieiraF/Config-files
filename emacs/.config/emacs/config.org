@@ -32,11 +32,13 @@
   - [[#company][Company]]
   - [[#python][Python]]
   - [[#rust][Rust]]
+  - [[#rasirofi-config][Rasi(rofi config)]]
   - [[#lua][Lua]]
   - [[#haskell][Haskell]]
 - [[#produtividade][Produtividade]]
   - [[#destacar-todo][Destacar TODO]]
 - [[#org-mode][ORG mode]]
+  - [[#org-babel-autosave][Org babel autosave]]
   - [[#habilitando-o-índice][Habilitando o índice]]
   - [[#trocando-o-asterisco-dos-cabeçalhos][Trocando o asterisco dos cabeçalhos]]
 - [[#which-key][Which Key]]
@@ -128,6 +130,11 @@
     "h v" '(describe-variable :wk "Describe variable")
     "h r r" '((lambda () (interactive) (load-file user-init-file)) :wk "Reload emacs config"))
 
+  ;; Org mode
+  (moang/leader-keys
+    "o" '(:ignore t :wk "Org")
+    "o t" '(org-babel-tangle :wk "Exportar blocos")
+    "o f" '(org-babel-tangle-file :wk "Exportar blocos para..."))
   ;; Troca(toggle) algum estado
   (moang/leader-keys
     "t" '(:ignore t wk "Toggle")
@@ -439,6 +446,15 @@ Completa qualquer código
   (setq rust-format-on-save t))
 #+end_src
 
+** Rasi(rofi config)
+
+#+begin_src emacs-lisp
+(use-package rasi-mode :ensure t)
+
+;; Adiciona o mapeamento para blocos org
+(add-to-list 'org-src-lang-modes '("rasi" . rasi))
+#+end_src
+
 ** Lua
 
 #+begin_src emacs-lisp
@@ -483,6 +499,23 @@ O ORG mode é uma série de funcionalidades para criar anotações, documentaç�
 
 ;; Desabilita a identação automática de blocos de código
 (setq org-edit-src-content-indentation 0)
+#+end_src
+
+** Org babel autosave
+O org mode me permite migrar meus arquivos de configurações de qualquer programa para esse formato documentado.
+Para isso, ele precisa juntar todos os blocos de código em um arquivo externo, parecido com esse do emacs. Quero
+que isso aconteça toda vez que eu salvar o arquivo, e é para isso que serve a configuração abaixo.
+
+#+begin_src emacs-lisp
+;(defun my/org-babel-tangle-config ()
+;  ;Executa org-babel-tangle automaticamente se o arquivo atual for um .org de configuração
+;  (when (string-equal (file-name-extension (buffer-file-name)) "org")
+;    (let ((org-confirm-babel-evaluate nil))
+;      (org-babel-tangle))))
+;
+;(add-hook 'org-mode-hook
+;          (lambda ()
+;            (add-hook 'after-save-hook #'my/org-babel-tangle-config nil 'make-it-local)))
 #+end_src
 
 ** Habilitando o índice
