@@ -1,0 +1,47 @@
+configuration {
+	modes: "window,drun,run,ssh";
+	font: "Jetbrains Mono 30";
+	show-icons: true;
+	disable-history: false;
+	case-sensitive: false;
+	display-drun: "Open";
+  timeout {
+      action: "kb-cancel";
+      delay:  0;
+  }
+  filebrowser {
+      directories-first: true;
+      sorting-method:    "name";
+  }
+}
+
+@import "~/.cache/wal/colors-rofi-dark"
+
+window {
+    background-color: transparent;
+    transparency: "real";
+    border-radius: 0.5em;
+    border: 2px;
+    border-color: #F0A73A;
+    padding: 0.5em;
+}
+
+mainbox {
+    border-radius: 0.2em;
+}
+
+prompt {
+    background-color: #F0A73A;
+    border-radius: 0.1em;
+    text-color: #08111C;
+}
+
+element {
+    spacing: 0.5em;
+    border-radius: 0.1em;
+    padding: 0.1em;
+}
+
+element-icon {
+    size: 0.8em;
+}
