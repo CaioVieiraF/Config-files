@@ -44,7 +44,6 @@ set $right l
 
 # Your preferred terminal emulator
 set $term alacritty
-set $main_term alacritty
 
 # Default browser
 set $browser librewolf
@@ -54,11 +53,9 @@ set $get_volume wpctl get-volume @DEFAULT_SINK@ | sed 's/^Volume: 0.//'
 set $audio_notify dunstify -h string:x-dunst-stack-tag:audio "VOLUME" -a 'audio-notify' -h int:value:$($get_volume)
 set $audio_notify_mute dunstify -h string:x-dunst-stack-tag:audio "MUTE" -a 'audio-mute' 
 
-# Note: pass the final command to swaymsg so that the resulting window can be opened
-# on the original workspace that the command was run on.
-set $menu rofi -show drun
+# App menu application
+set $menu $HOME/scripts/mymenu
 for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
-
 #+end_src
 
 * Aparencia
@@ -78,6 +75,9 @@ blur_radius 5
 
 # Rofi rule to blur the background
 layer_effects "rofi" blur enable
+layer_effects "rofi" shadow enable
+layer_effects "menu" blur enable
+layer_effects "menu" shadow enable
 
 # Shadows
 shadows on
@@ -111,10 +111,10 @@ output HDMI-A-2 {
 * Tela de descanço
 
 #+begin_src bash
-exec swayidle -w \
-        timeout 300 'swaylock -f -c 000000' \
-        timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-        before-sleep 'swaylock -f -c 000000'
+#exec swayidle -w \
+#        timeout 300 'swaylock -f -c 000000' \
+#        timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+#        before-sleep 'swaylock -f -c 000000'
 #+end_src
 
 * Layout do teclado
@@ -131,7 +131,7 @@ input type:keyboard {
 
 #+begin_src bash
 # Start a terminal
-bindsym $mod+z exec $main_term
+bindsym $mod+z exec $term
 
 # Open a browser window
 bindsym $mod+Shift+b exec $browser
@@ -140,7 +140,7 @@ bindsym $mod+Shift+b exec $browser
 bindsym $mod+n exec $term --config-file ~/.config/alacritty/neovim.toml -e nvim
 
 # Open Emacs
-bindsym $mod+i exec emacs
+bindsym $mod+i exec emacsclient -c -a 'emacs'
 
 # Kill focused window
 bindsym $mod+Shift+q kill
@@ -352,4 +352,6 @@ gaps inner 10
 gaps outer 20
 default_border pixel 2
 client.focused #4B5055 #4B5055 #4B5055 #4B5055
+
+exec /usr/bin/emacs --daemon
 #+end_src
