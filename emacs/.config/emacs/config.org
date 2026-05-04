@@ -7,6 +7,7 @@
 * Índice :toc:
 - [[#inicialização][Inicialização]]
   - [[#carregando-scripts-externos][Carregando scripts externos]]
+  - [[#dashboard][Dashboard]]
   - [[#carregando-evil-mode][Carregando evil mode]]
   - [[#atalhos-de-teclado][Atalhos de teclado]]
   - [[#diminish][Diminish]]
@@ -16,8 +17,6 @@
   - [[#rainbow-mode][Rainbow mode]]
   - [[#rainbow-delimiter][Rainbow delimiter]]
 - [[#backup][Backup]]
-- [[#dashboard][Dashboard]]
-  - [[#projectile][Projectile]]
 - [[#alterações-da-interface-gráfica][Alterações da interface gráfica]]
   - [[#desabilita-menubar-toolbar-and-scrollbar][Desabilita Menubar, Toolbar and Scrollbar]]
   - [[#tema][Tema]]
@@ -33,14 +32,17 @@
   - [[#python][Python]]
   - [[#rust][Rust]]
   - [[#rasirofi-config][Rasi(rofi config)]]
+  - [[#javascript][Javascript]]
   - [[#lua][Lua]]
   - [[#haskell][Haskell]]
 - [[#produtividade][Produtividade]]
   - [[#destacar-todo][Destacar TODO]]
 - [[#org-mode][ORG mode]]
+  - [[#visual-moderno][Visual moderno]]
+  - [[#olivetti][Olivetti]]
+  - [[#org-agenda][Org agenda]]
   - [[#org-babel-autosave][Org babel autosave]]
   - [[#habilitando-o-índice][Habilitando o índice]]
-  - [[#trocando-o-asterisco-dos-cabeçalhos][Trocando o asterisco dos cabeçalhos]]
 - [[#which-key][Which Key]]
 
 * Inicialização
@@ -51,6 +53,38 @@
 (require 'elpaca-setup)
 #+end_src
   
+** Dashboard
+#+begin_src emacs-lisp
+(use-package dashboard
+    :ensure t
+    :init
+    (setq initial-buffer-choice 'dashboard-open)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-banner-logo-title "Emacs!")
+    (setq dashboard-startup-banner 'logo)
+    (setq dashboard-center-content t)
+    (setq dashboard-items '((recents . 5)
+                            (agenda . 5)
+                            (bookmarks . 5)
+                            (projects . 5)
+                            (registers . 3)))
+    (setq dashboard-modify-heading-icons '((recents . "file-text")
+                                            (bookmarks . "book")))
+    :config
+    (dashboard-setup-startup-hook))
+#+end_src
+
+*** Projectile
+
+#+begin_src emacs-lisp
+(use-package projectile
+  :ensure t
+  :diminish
+  :config
+  (projectile-mode 1))
+#+end_src
+
 ** Carregando evil mode
 
 #+begin_src emacs-lisp
@@ -60,12 +94,12 @@
   (setq evil-want-keybinding nil)
   (evil-mode))
 
-(elpaca evil-collection
-  (use-package evil-collection
-    :after evil
-    :config
-    (setq evil-collection-mode-list '(dashboard dired ibuffer))
-    (evil-collection-init)))
+(use-package evil-collection
+  :ensure t
+  :after evil
+  :config
+  (setq evil-collection-mode-list '(dashboard dired ibuffer))
+  (evil-collection-init))
 
 ;; Muda o comportamento de algumas teclas no modo Evil para
 ;; funcionar do jeito padrão no emacs.
@@ -101,6 +135,7 @@
     "." '(find-file :wk "Find file")
     "f" '(:ignore t :wk "File")
     "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
+    "f o" '((lambda () (interactive) (find-file "~/org/")) :wk "Editar arquivos ORG")
     "f r" '(counsel-recentf :wk "Find recent files")
     "TAB TAB" '(comment-line :wk "Comment lines"))
 
@@ -123,24 +158,68 @@
     "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
     "e r" '(eval-region :wk "Evaluate elisp in region"))
 
+  ;; Org mode
+  (moang/leader-keys
+    "o" '(:ignore t :wk "Org")
+    "o t" '(org-babel-tangle :wk "Exportar blocos")
+    "o i" '(org-info :wk "Manual do Org Mode")
+    "o a" '(org-agenda :wk "Abre Org Agenda")
+    "o n" '(org-forward-heading-same-level :wk "Move para o próximo cabeçalho de mesmo nível")
+    "o p" '(org-backward-heading-same-level :wk "Move para o cabeçalho de mesmo nível anterior")
+    "o f" '(org-babel-tangle-file :wk "Exportar blocos para..."))
+
+  ;; Troca(toggle) algum estado
+  (moang/leader-keys
+    "t" '(:ignore t wk "Toggle")
+    "t n" '(neotree-toggle :wk "Toggle neotree")
+    "t h" '(org-toggle-heading :wk "Troca linha atual para cabeçalho")
+    "t i" '(org-toggle-item :wk "Troca linha atual para item de lista")
+    "t w" '(visual-line-mode :wk "Toggle line wrap"))
+
   ;; Ajuda e algumas coisas a mais
   (moang/leader-keys
     "h" '(:ignore t :wk "Help")
     "h f" '(describe-function :wk "Describe function")
     "h v" '(describe-variable :wk "Describe variable")
-    "h r r" '((lambda () (interactive) (load-file user-init-file)) :wk "Reload emacs config"))
-
-  ;; Org mode
-  (moang/leader-keys
-    "o" '(:ignore t :wk "Org")
-    "o t" '(org-babel-tangle :wk "Exportar blocos")
-    "o f" '(org-babel-tangle-file :wk "Exportar blocos para..."))
-  ;; Troca(toggle) algum estado
-  (moang/leader-keys
-    "t" '(:ignore t wk "Toggle")
-    "t n" '(neotree-toggle :wk "Toggle neotree")
-    "t w" '(visual-line-mode :wk "Toggle line wrap")))
+    "h r r" '((lambda () (interactive) (load-file user-init-file)) :wk "Reload emacs config")))
 #+end_src
+
+*** Arquivos
+
+|-----------------+-----------------------------------+---------|
+| Comando         | Descrição                         | Atalho  |
+|-----------------+-----------------------------------+---------|
+| counsel-M-x     | Troca o M-x padrão                | SPC SPC |
+| find-file       | Abrir um arquivo                  | SPC f   |
+| find-file       | Abrir configuração do emacs       | SPC f c |
+| counsel-recentf | Abrir arquivo aberto recentemente | SPC f r |
+| comment-line    | Comenta a linha atual             | TAB TAB |
+|-----------------+-----------------------------------+---------|
+
+*** Buffer
+
+|---------------------+------------------------------+---------|
+| Comando             | Descrição                    | Atalho  |
+|---------------------+------------------------------+---------|
+| switch-to-buffer    | Troca o buffer               | SPC b b |
+| ibuffer             | Abre a lista de buffers      | SPC b i |
+| kill-current-buffer | Fecha o buffer atual         | SPC b k |
+| next-buffer         | Troca para o próximo buffer  | SPC b n |
+| previous-buffer     | Troca para o buffer anterior | SPC b p |
+| revert-buffer       | Recarrega o buffer atual     | SPC b r |
+|---------------------+------------------------------+---------|
+
+*** Interpretar código lisp
+
+|-----------------+-------------------------------------+---------|
+| Comando         | Descrição                           | Atalho  |
+|-----------------+-------------------------------------+---------|
+| eval-buffer     | Interpreta elisp no buffer          | SPC e b |
+| eval-defun      | Interpreta defun no ponto ou depois | SPC e d |
+| eval-expression | Interpreta uma expresão elisp       | SPC e e |
+| eval-last-sexp  | Interpreta elisp antes de um ponto  | SPC e l |
+| eval-region     | Interpreta elisp em uma região      | SPC e r |
+|-----------------+-------------------------------------+---------|
 
 ** Diminish
 
@@ -192,8 +271,7 @@ Defining the fonts for emacs
 
 * Cores em código
 ** Rainbow mode
-Esse é um pacote que coloca a cor de um código de cor(ex. #ffffff) como
-seu fundo para que seja possível visualizar o que está escrito.
+Esse é um pacote que coloca a cor de um código de cor(ex. #ffffff) como seu fundo para que seja possível visualizar o que está escrito.
 
 #+begin_src emacs-lisp
 (use-package rainbow-mode :ensure t :diminish :hook org-mode prog-mode)
@@ -212,38 +290,6 @@ seu fundo para que seja possível visualizar o que está escrito.
 
 #+begin_src emacs-lisp
 (setq backup-directory-alist '((".*" . "~/.local/share/Trash/files")))
-#+end_src
-
-* Dashboard
-#+begin_src emacs-lisp
-(use-package dashboard
-    :ensure t
-    :init
-    (setq inital-buffer-choice 'dashboard-open)
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-file-icons t)
-    (setq dashboard-banner-logo-title "Emacs!")
-    (setq dashboard-startup-banner 'logo)
-    (setq dashboard-center-content t)
-    (setq dashboard-items '((recents . 5)
-                            (agenda . 5)
-                            (bookmarks . 5)
-                            (projects . 5)
-                            (registers . 3)))
-    (setq dashboard-modify-heading-icons '((recents . "file-text")
-                                            (bookmarks . "book")))
-    :config
-    (dashboard-setup-startup-hook))
-#+end_src
-
-** Projectile
-
-#+begin_src emacs-lisp
-(use-package projectile
-  :ensure t
-  :diminish
-  :config
-  (projectile-mode 1))
 #+end_src
 
 * Alterações da interface gráfica
@@ -382,6 +428,8 @@ Some changes to the graphical aspects of Emacs.
   :hook (
          (rust-mode . lsp)
          (python-mode . lsp)
+         (typescript-ts-mode . lsp)
+         (javascript-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   :commands lsp)
 
@@ -455,6 +503,11 @@ Completa qualquer código
 (add-to-list 'org-src-lang-modes '("rasi" . rasi))
 #+end_src
 
+** Javascript
+
+#+begin_src emacs-lisp
+#+end_src
+
 ** Lua
 
 #+begin_src emacs-lisp
@@ -471,6 +524,7 @@ Completa qualquer código
 
 ** Destacar TODO
 Esse pacote altera a visualização da palavra 'TODO' e algumas outras palavras em qualquer arquivo.
+
 #+begin_src emacs-lisp
 (use-package hl-todo
   :ensure t
@@ -499,12 +553,56 @@ O ORG mode é uma série de funcionalidades para criar anotações, documentaç�
 
 ;; Desabilita a identação automática de blocos de código
 (setq org-edit-src-content-indentation 0)
+(setq org-indent-mode 1)
+
+;; Pasta para os arquivos Org
+(setq org-directory "~/org")
+
+;; Pasta para colocar itens caso não tenha outro lugar
+(setq org-default-notes-file (concat org-directory "notes.org"))
+#+end_src
+
+** Visual moderno
+O org mode por padrão parece um terminal, com tudo na interface mostrando o texto usado para construir os elementos. Esse pacote dá uma repaginada no visual
+
+#+begin_src emacs-lisp
+(use-package org-modern
+  :ensure t
+  :config
+  (with-eval-after-load 'org (global-org-modern-mode)))
+#+end_src
+
+Além disso, preciso corrigir um problema: a identação de blocos. Esse pacote interfere na decoração dos blocos de código, então preciso de um outro para corrigir.
+#+begin_src emacs-lisp
+(use-package org-modern-indent
+ :straight (org-modern-indent :type git :host github :repo "jdtsmith/org-modern-indent")
+ :config
+ (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+#+end_src
+
+** Olivetti
+O olivetti serve para centralizar o conteúdo de um arquivo .org no meio da tela
+
+#+begin_src emacs-lisp
+(use-package olivetti
+  :ensure t
+  :init
+  (setq olivetti-body-width 100)
+  :hook
+  (org-mode . olivetti-mode))
+#+end_src
+
+** Org agenda
+
+#+begin_src emacs-lisp
+(setq org-agenda-files
+      (list (concat org-directory "tasks.org")
+	    (concat org-directory "notes.org")
+	    (concat org-directory "journal.org")))
 #+end_src
 
 ** Org babel autosave
-O org mode me permite migrar meus arquivos de configurações de qualquer programa para esse formato documentado.
-Para isso, ele precisa juntar todos os blocos de código em um arquivo externo, parecido com esse do emacs. Quero
-que isso aconteça toda vez que eu salvar o arquivo, e é para isso que serve a configuração abaixo.
+O org mode me permite migrar meus arquivos de configurações de qualquer programa para esse formato documentado. Para isso, ele precisa juntar todos os blocos de código em um arquivo externo, parecido com esse do emacs. Quero que isso aconteça toda vez que eu salvar o arquivo, e é para isso que serve a configuração abaixo.
 
 #+begin_src emacs-lisp
 ;(defun my/org-babel-tangle-config ()
@@ -526,16 +624,9 @@ que isso aconteça toda vez que eu salvar o arquivo, e é para isso que serve a 
   :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+end_src
 
-** Trocando o asterisco dos cabeçalhos
-#+begin_src emacs-lisp
-(add-hook 'org-mode-hook 'org-indent-mode)
-(use-package org-bullets :ensure t)
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+end_src
 
 * Which Key
-O Which key é uma ferramenta que indica quais atalhos posso usar durante
-a digitação deles. Quando eu aperto a leader key ele aparece no minibuffer.
+O Which key é uma ferramenta que indica quais atalhos posso usar durante a digitação deles. Quando eu aperto a leader key ele aparece no minibuffer.
 
 #+begin_src emacs-lisp
 (use-package which-key
@@ -555,5 +646,4 @@ a digitação deles. Quando eu aperto a leader key ele aparece no minibuffer.
         which-key-max-description-lenght 25
         which-key-allow-imprecise-window-fit t
         which-key-separator "  "))
-  
 #+end_src
