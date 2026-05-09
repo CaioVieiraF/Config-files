@@ -54,7 +54,7 @@ set $audio_notify dunstify -h string:x-dunst-stack-tag:audio "VOLUME" -a 'audio-
 set $audio_notify_mute dunstify -h string:x-dunst-stack-tag:audio "MUTE" -a 'audio-mute' 
 
 # App menu application
-set $menu $HOME/scripts/mymenu
+set $menu rofi -show drun
 for_window [app_id="^launcher$"] floating enable, sticky enable, resize set 30 ppt 60 ppt, border pixel 10
 #+end_src
 
@@ -76,8 +76,11 @@ blur_radius 5
 # Rofi rule to blur the background
 layer_effects "rofi" blur enable
 layer_effects "rofi" shadow enable
-layer_effects "menu" blur enable
-layer_effects "menu" shadow enable
+#layer_effects "menu" blur enable
+#layer_effects "menu" shadow enable
+layer_effects "launcher" blur enable
+layer_effects "notifications" blur enable
+layer_effects "panel" blur enable
 
 # Shadows
 shadows on
@@ -343,7 +346,7 @@ include /etc/sway/config.d/*
 * Gerenciador de notificações
 
 #+begin_src bash
-exec /usr/bin/dunst 
+exec /usr/local/bin/dunst 
 #+end_src
 
 * Outras coisas

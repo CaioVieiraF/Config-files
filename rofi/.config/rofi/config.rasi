@@ -1,18 +1,20 @@
 configuration {
-	modes: "window,drun,run,ssh";
-	font: "Jetbrains Mono 30";
-	show-icons: true;
-	disable-history: false;
-	case-sensitive: false;
-	display-drun: "Open";
-  timeout {
-      action: "kb-cancel";
-      delay:  0;
-  }
-  filebrowser {
-      directories-first: true;
-      sorting-method:    "name";
-  }
+    modes: "window,drun,run,ssh";
+    font: "Jetbrains Mono 30";
+    show-icons: true;
+    disable-history: false;
+    case-sensitive: false;
+    display-name: "run";
+    window-command: "top";
+    display-drun: "Open";
+    timeout {
+        action: "kb-cancel";
+        delay:  0;
+    }
+    filebrowser {
+        directories-first: true;
+        sorting-method:    "name";
+    }
 }
 
 @import "~/.cache/wal/colors-rofi-dark"
