@@ -1,0 +1,64 @@
+#+TITLE: Waybar configuration
+#+AUTHOR: Caio V. Fernandes
+#+STARTUP: showeverything
+#+OPTIONS: toc:2
+
+* Configuration
+#+begin_src css :tangle ../../.config/waybar/config
+{
+    "position": "bottom", // Waybar position (top|bottom|left|right)
+    "spacing": 4, // Gaps between modules (4px)
+    // Choose the order of the modules
+    "modules-left": ["tray", "sway/workspaces", "sway/mode", "sway/scratchpad"],
+
+    "sway/workspaces": {
+        "format": "",
+    },
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 10
+    },
+}
+#+end_src
+
+* Theme
+#+begin_src css :tangle ../../.config/waybar/style.css
+
+@import url('file:///home/v/.cache/wal/colors-waybar.css');
+
+*{
+    border-radius: 0;
+    border: none;
+    font-family: "Shure Tech Mono Nerd Font";
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    font-size: 8px;
+}
+
+#workspaces {
+    background: @background;
+}
+
+#workspaces button {
+    padding: 0;
+    padding-left: 48px;
+    padding-right: 48px;
+    color: @color1;
+}
+
+
+#workspaces button.focused {
+    background: @foreground;
+}
+
+#workspaces button:hover {
+    background: @color1;
+}
+
+.modules-left {
+    background: @foreground;
+}
+#+end_src
