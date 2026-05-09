@@ -1,0 +1,595 @@
+#+TITLE: Dunst config
+#+AUTHOR: Caio V. Fernandes
+#+STARTUP: showeverything
+#+OPTIONS: toc:2
+#+property: header-args :tangle ../../.config/dunst/dunstrc
+
+* Índice :toc:
+- [[#sobre][Sobre]]
+- [[#display][Display]]
+- [[#geometria][Geometria]]
+- [[#barra-de-progresso][Barra de progresso]]
+- [[#texto][Texto]]
+- [[#ícones][Ícones]]
+- [[#histórico][Histórico]]
+- [[#outras-coisas][Outras coisas]]
+- [[#wayland][Wayland]]
+- [[#configurações-legadas][Configurações legadas]]
+  - [[#mouse][Mouse]]
+- [[#experimental][Experimental]]
+- [[#tema][Tema]]
+
+* Sobre
+É possível ver todas as opções de configuração na página 5 do manual do dunst.
+
+Aqui apenas inicializo a configuração
+#+begin_src bash
+[global]
+#+end_src
+
+* Display
+Mostra as notificações no monitor principal apenas
+
+#+begin_src bash
+    monitor = 0
+    follow = none
+#+end_src
+
+* Geometria
+The width of the window, excluding the frame.
+
+#+begin_src bash
+    width = (0, 900)
+#+end_src
+
+The height of a single notification, excluding the frame.
+
+NOTE: Dunst from version 1.11 and older don't support dynamic height and the given value is treated as the maximum height
+#+begin_src bash
+    height = (0, 200)
+#+end_src
+
+Position the notification in the top right corner
+#+begin_src bash
+    origin = top-right
+#+end_src
+
+Offset from the origin
+
+NOTE: Dunst from version 1.11 and older use this alternative notation
+offset = 10x50
+#+begin_src bash
+    offset = (50, 40)
+#+end_src
+
+Scale factor. It is auto-detected if value is 0.
+#+begin_src bash
+    scale = 1
+#+end_src
+
+Maximum number of notification (0 means no limit)
+#+begin_src bash
+    notification_limit = 8
+#+end_src
+
+* Barra de progresso
+
+Turn on the progress bar. It appears when a progress hint is passed with
+for example dunstify -h int:value:12
+#+begin_src bash
+    progress_bar = true
+#+end_src
+
+Set the progress bar height. This includes the frame, so make sure
+it's at least twice as big as the frame width.
+#+begin_src bash
+    progress_bar_height = 20
+#+end_src
+
+Set the frame width of the progress bar
+#+begin_src bash
+    progress_bar_frame_width = 1
+#+end_src
+
+Set the minimum width for the progress bar
+#+begin_src bash
+    progress_bar_min_width = 700
+#+end_src
+
+Set the maximum width for the progress bar
+#+begin_src bash
+    progress_bar_max_width = 800
+#+end_src
+
+Corner radius for the progress bar. 0 disables rounded corners.
+#+begin_src bash
+    progress_bar_corner_radius = 2
+#+end_src
+
+Define which corners to round when drawing the progress bar. If progress_bar_corner_radius
+is set to 0 this option will be ignored.
+#+begin_src bash
+    progress_bar_corners = all
+#+end_src
+
+Corner radius for the icon image.
+#+begin_src bash
+    icon_corner_radius = 4
+#+end_src
+
+Define which corners to round when drawing the icon image. If icon_corner_radius
+is set to 0 this option will be ignored.
+#+begin_src bash
+    icon_corners = all
+#+end_src
+
+Show how many messages are currently hidden (because of
+notification_limit).
+#+begin_src bash
+    indicate_hidden = yes
+#+end_src
+
+The transparency of the window.  Range: [0; 100].
+This option will only work if a compositing window manager is
+present (e.g. xcompmgr, compiz, etc.). (X11 only)
+#+begin_src bash
+    transparency = 0
+#+end_src
+
+Draw a line of "separator_height" pixel height between two
+notifications.
+Set to 0 to disable.
+If gap_size is greater than 0, this setting will be ignored.
+#+begin_src bash
+    separator_height = 2
+#+end_src
+
+Padding between text and separator.
+#+begin_src bash
+    padding = 32
+#+end_src
+
+Horizontal padding.
+#+begin_src bash
+    horizontal_padding = 32
+#+end_src
+
+Padding between text and icon.
+#+begin_src bash
+    text_icon_padding = 22
+#+end_src
+
+Defines width in pixels of frame around the notification window.
+Set to 0 to disable.
+#+begin_src bash
+    frame_width = 3
+#+end_src
+
+Defines color of the frame around the notification window.
+#+begin_src bash
+    frame_color = "#A29F9F"
+#+end_src
+
+Size of gap to display between notifications - requires a compositor.
+If value is greater than 0, separator_height will be ignored and a border
+of size frame_width will be drawn around each notification instead.
+Click events on gaps do not currently propagate to applications below.
+#+begin_src bash
+    gap_size = 0
+#+end_src
+
+Define a color for the separator.
+possible values are:
+ * auto: dunst tries to find a color fitting to the background;
+ * foreground: use the same color as the foreground;
+ * frame: use the same color as the frame;
+ * anything else will be interpreted as a X color.
+#+begin_src bash
+    separator_color = frame
+#+end_src
+
+Sort type.
+possible values are:
+ * id: sort by id
+ * urgency_ascending: sort by urgency (low then normal then critical)
+ * urgency_descending: sort by urgency (critical then normal then low)
+ * update: sort by update (most recent always at the top)
+#+begin_src bash
+    sort = yes
+#+end_src
+
+Don't remove messages, if the user is idle (no mouse or keyboard input)
+for longer than idle_threshold seconds.
+Set to 0 to disable.
+A client can set the 'transient' hint to bypass this. See the rules
+section for how to disable this if necessary
+#+begin_src bash
+    # idle_threshold = 120
+#+end_src
+
+* Texto
+
+Fonte
+#+begin_src bash
+    font = "Shure Tech Mono Nerd Font 22"
+#+end_src
+
+The spacing between lines.  If the height is smaller than the
+font height, it will get raised to the font height.
+#+begin_src bash
+    line_height = 0
+#+end_src
+
+Possible values are:
+full: Allow a small subset of html markup in notifications:
+       <b>bold</b>
+       <i>italic</i>
+       <s>strikethrough</s>
+       <u>underline</u>
+
+       For a complete reference see
+       <https://docs.gtk.org/Pango/pango_markup.html>.
+
+strip: This setting is provided for compatibility with some broken
+       clients that send markup even though it's not enabled on the
+       server. Dunst will try to strip the markup but the parsing is
+       simplistic so using this option outside of matching rules for
+       specific applications *IS GREATLY DISCOURAGED*.
+
+no:    Disable markup parsing, incoming notifications will be treated as
+       plain text. Dunst will not advertise that it has the body-markup
+       capability if this is set as a global setting.
+
+It's important to note that markup inside the format option will be parsed
+regardless of what this is set to.
+#+begin_src bash
+    markup = full
+#+end_src
+
+The format of the message.  Possible variables are:
+  %a  appname
+  %s  summary
+  %b  body
+  %i  iconname (including its path)
+  %I  iconname (without its path)
+  %p  progress value if set ([  0%] to [100%]) or nothing
+  %n  progress value if set without any extra characters
+  %%  Literal %
+Markup is allowed
+#+begin_src bash
+    format = "<b>%s</b>\n%b"
+#+end_src
+
+Alignment of message text.
+Possible values are "left", "center" and "right".
+#+begin_src bash
+    alignment = left
+#+end_src
+
+Vertical alignment of message text and icon.
+Possible values are "top", "center" and "bottom".
+#+begin_src bash
+    vertical_alignment = center
+#+end_src
+
+Show age of message if message is older than show_age_threshold
+seconds.
+Set to -1 to disable.
+#+begin_src bash
+    show_age_threshold = 60
+#+end_src
+
+Specify where to make an ellipsis in long lines.
+Possible values are "start", "middle" and "end".
+#+begin_src bash
+    ellipsize = middle
+#+end_src
+
+Ignore newlines '\n' in notifications.
+#+begin_src bash
+    ignore_newline = no
+#+end_src
+
+Stack together notifications with the same content
+#+begin_src bash
+    stack_duplicates = true
+#+end_src
+
+Hide the count of stacked notifications with the same content
+#+begin_src bash
+    hide_duplicate_count = false
+#+end_src
+
+Display indicators for URLs (U) and actions (A).
+#+begin_src bash
+    show_indicators = yes
+#+end_src
+
+* Ícones
+
+Recursive icon lookup. You can set a single theme, instead of having to
+define all lookup paths.
+#+begin_src bash
+    enable_recursive_icon_lookup = true
+#+end_src
+
+Set icon theme (only used for recursive icon lookup)
+
+You can also set multiple icon themes, with the leftmost one being used first.
+#+begin_src bash
+    icon_theme = breeze, Adwaita
+    # icon_theme = "Adwaita, breeze"
+#+end_src
+
+Align icons left/right/top/off
+#+begin_src bash
+    icon_position = left
+#+end_src
+
+Scale small icons up to this size, set to 0 to disable. Helpful
+for e.g. small files or high-dpi screens. In case of conflict,
+max_icon_size takes precedence over this.
+#+begin_src bash
+    min_icon_size = 32
+#+end_src
+
+Scale larger icons down to this size, set to 0 to disable
+#+begin_src bash
+    max_icon_size = 128
+#+end_src
+
+Paths to default icons (only necessary when not using recursive icon lookup)
+#+begin_src bash
+    icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+#+end_src
+
+* Histórico
+
+Should a notification popped up from history be sticky or timeout
+as if it would normally do.
+#+begin_src bash
+    sticky_history = yes
+#+end_src
+
+Maximum amount of notifications kept in history
+#+begin_src bash
+    history_length = 20
+#+end_src
+
+* Outras coisas
+
+dmenu path.
+#+begin_src bash
+    dmenu = /usr/bin/env rofi -dmenu -p dunst:
+#+end_src
+
+Browser for opening urls in context menu.
+#+begin_src bash
+    #browser = /usr/bin/xdg-open
+    browser = librewolf
+#+end_src
+
+Always run rule-defined scripts, even if the notification is suppressed
+#+begin_src bash
+    always_run_script = true
+#+end_src
+
+Define the title of the windows spawned by dunst (X11 only)
+#+begin_src bash
+    title = Dunst
+#+end_src
+
+Define the class of the windows spawned by dunst (X11 only)
+#+begin_src bash
+    class = Dunst
+#+end_src
+
+Define the corner radius of the notification window
+in pixel size. If the radius is 0, you have no rounded
+corners.
+The radius will be automatically lowered if it exceeds half of the
+notification height to avoid clipping text and/or icons.
+#+begin_src bash
+    corner_radius = 2
+#+end_src
+
+Define which corners to round when drawing the window. If the corner radius
+is set to 0 this option will be ignored.
+
+Comma-separated list of the corners. The accepted corner values are bottom-right,
+bottom-left, top-right, top-left, top, bottom, left, right or all.
+#+begin_src bash
+    corners = all
+#+end_src
+
+Ignore the dbus closeNotification message.
+Useful to enforce the timeout set by dunst configuration. Without this
+parameter, an application may close the notification sent before the
+user defined timeout.
+#+begin_src bash
+    ignore_dbusclose = false
+#+end_src
+
+* Wayland 
+
+Configurações específicas do wayland
+
+Uncomment this if you want to let notifications appear under fullscreen
+applications (default: overlay)
+#+begin_src bash
+    # layer = top
+#+end_src
+
+Set this to true to use X11 output on Wayland.
+#+begin_src bash
+    force_xwayland = false
+#+end_src
+
+* Configurações legadas
+
+Use the Xinerama extension instead of RandR for multi-monitor support.
+This setting is provided for compatibility with older nVidia drivers that
+do not support RandR and using it on systems that support RandR is highly
+discouraged.
+
+By enabling this setting dunst will not be able to detect when a monitor
+is connected or disconnected which might break follow mode if the screen
+layout changes.
+#+begin_src bash
+    force_xinerama = false
+#+end_src
+
+** Mouse
+
+Defines list of actions for each mouse event
+Possible values are:
+ * none: Don't do anything.
+ * do_action: Invoke the action determined by the action_name rule. If there is no
+              such action, open the context menu.
+ * open_url: If the notification has exactly one url, open it. If there are multiple
+             ones, open the context menu.
+ * close_current: Close current notification.
+ * close_all: Close all notifications.
+ * context: Open context menu for the notification.
+ * context_all: Open context menu for all notifications.
+These values can be strung together for each mouse event, and
+will be executed in sequence.
+#+begin_src bash
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+#+end_src
+
+* Experimental
+Experimental features that may or may not work correctly. Do not expect them to have a consistent behaviour across releases.
+
+
+Calculate the dpi to use on a per-monitor basis.
+If this setting is enabled the Xft.dpi value will be ignored and instead
+dunst will attempt to calculate an appropriate dpi value for each monitor
+using the resolution and physical size. This might be useful in setups
+where there are multiple screens with very different dpi values.
+#+begin_src bash
+[experimental]
+    per_monitor_dpi = false
+#+end_src
+
+* Tema
+
+#+begin_src bash
+[urgency_low]
+    # IMPORTANT: colors have to be defined in quotation marks.
+    # Otherwise the "#" and following would be interpreted as a comment.
+    background = "#222222"
+    foreground = "#888888"
+    timeout = 10
+    # Icon for notifications with low urgency
+    default_icon = dialog-information
+#+end_src
+
+#+begin_src bash
+[urgency_normal]
+    background = "#0a1015"
+    foreground = "#e3d9d3"
+    timeout = 10
+    override_pause_level = 30
+    # Icon for notifications with normal urgency
+    default_icon = dialog-information
+
+#+end_src
+
+#+begin_src bash
+[urgency_critical]
+    background = "#900000"
+    foreground = "#ffffff"
+    frame_color = "#ff0000"
+    timeout = 0
+    override_pause_level = 60
+    # Icon for notifications with critical urgency
+    default_icon = dialog-warning
+
+#+end_src
+
+#+begin_src bash
+# Every section that isn't one of the above is interpreted as a rules to
+# override settings for certain messages.
+#
+# Messages can be matched by
+#    appname (discouraged, see desktop_entry)
+#    body
+#    category
+#    desktop_entry
+#    icon
+#    match_transient
+#    msg_urgency
+#    stack_tag
+#    summary
+#
+# and you can override the
+#    background
+#    foreground
+#    format
+#    frame_color
+#    fullscreen
+#    new_icon
+#    set_stack_tag
+#    set_transient
+#    set_category
+#    timeout
+#    urgency
+#    icon_position
+#    skip_display
+#    history_ignore
+#    action_name
+#    word_wrap
+#    ellipsize
+#    alignment
+#    hide_text
+#    override_pause_level
+#
+# Shell-like globbing will get expanded.
+#
+# Instead of the appname filter, it's recommended to use the desktop_entry filter.
+# GLib based applications export their desktop-entry name. In comparison to the appname,
+# the desktop-entry won't get localized.
+#
+# You can also allow a notification to appear even when paused. Notification will appear whenever notification's override_pause_level >= dunst's paused level.
+# This can be used to set partial pause modes, where more urgent notifications get through, but less urgent stay paused. To do that, you can override the following in the rules:
+# override_pause_level = X
+
+# SCRIPTING
+# You can specify a script that gets run when the rule matches by
+# setting the "script" option.
+# The script will be called as follows:
+#   script appname summary body icon urgency
+# where urgency can be "LOW", "NORMAL" or "CRITICAL".
+#
+# NOTE: It might be helpful to run dunst -print in a terminal in order
+# to find fitting options for rules.
+
+#+end_src
+
+#+begin_src bash
+[audio]
+    appname = "audio-notify"
+
+    default_icon = "/usr/share/icons/breeze-dark/status/16@3x/audio-volume-medium.svg"
+
+    alignment = center
+    fullscreen = show
+    highlight = "#e3d9d3"
+    timeout = 2
+
+#+end_src
+
+#+begin_src bash
+[audio-mute]
+    appname = "audio-mute"
+
+    default_icon = "/usr/share/icons/breeze-dark/status/16@3x/audio-off.svg"
+
+    alignment = center
+    fullscreen = show
+    timeout = 2
+
+#+end_src
